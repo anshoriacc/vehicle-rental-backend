@@ -6,6 +6,29 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "eslint": "^8.4.0"
-  }
+    "eslint": "^8.4.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0"
+  },
+  "name": "vehicle_rental",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anshoriacc/vehicle_rental.git"
+  },
+  "author": "arik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anshoriacc/vehicle_rental/issues"
+  },
+  "homepage": "https://github.com/anshoriacc/vehicle_rental#readme",
+  "description": ""
 }

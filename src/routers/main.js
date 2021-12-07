@@ -1,25 +1,22 @@
 const express = require("express");
 const mainRouter = express.Router();
 
-const classRouter = require("./classes");
-const studentRouter = require("./students");
-const welcomeRouter = require("./welcome");
-const getDataRouter = require("./getdata");
+const addUserRouter = require("./adduser");
+const vehicleRouter = require("./vehicles");
+const profileRouter = require("./profile");
+const reservationRouter = require("./reservation");
+// const historyRouter = require("./history");
+// const favouriteRouter = require("./favourites");
 
-const attachValueMiddleware = require("../middlewares/attachValue");
-// mainRouter akan dijadikan sebagai HUB utama
-// semua request akan masuk melalui mainRouter
-// nanti mainRouter akan membagi ke masing masing subRouternya
-// banyaknya subRouter ditentukan dengan banyaknya jenis endpoint
+mainRouter.use("/adduser", addUserRouter);
+mainRouter.use("/vehicles", vehicleRouter);
+mainRouter.use("/profile", profileRouter);
+mainRouter.use("/reservation", reservationRouter);
+// mainRouter.use("/history", historyRouter);
+// mainRouter.use("/favourites", favouriteRouter);
 
-mainRouter.use("/classes", classRouter); // /classes
-mainRouter.use("/students", studentRouter); // /students
-mainRouter.use("/welcome", welcomeRouter); // /welcome
-mainRouter.use("/getdata", attachValueMiddleware, getDataRouter); // /getdata
-
-// expressApp.method(endpoint, handler1, handler2, dst)
 mainRouter.get("/", (request, response) => {
-  response.redirect("welcome");
+  response.redirect("vehicles");
 });
 
 module.exports = mainRouter;
