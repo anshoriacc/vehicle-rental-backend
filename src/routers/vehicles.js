@@ -5,8 +5,12 @@ const auth = require("../middlewares/authorize");
 
 vehicleRouter.get("/", vehicleController.getVehicle);
 vehicleRouter.get("/:id", vehicleController.vehicleDetail);
-vehicleRouter.post("/", vehicleController.postNewVehicle);
-vehicleRouter.patch("/:id", vehicleController.editVehicle);
-vehicleRouter.delete("/:id", vehicleController.deleteVehicle);
+vehicleRouter.post("/", auth.authorizeAdmin, vehicleController.postNewVehicle);
+vehicleRouter.patch("/:id", auth.authorizeAdmin, vehicleController.editVehicle);
+vehicleRouter.delete(
+  "/:id",
+  auth.authorizeAdmin,
+  vehicleController.deleteVehicle
+);
 
 module.exports = vehicleRouter;

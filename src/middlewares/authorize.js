@@ -46,4 +46,4 @@ const authorizeCustomer = (req, res, next) => {
   });
 };
 
-module.exsports = { authorize, authorizeAdmin, authorizeCustomer };
+module.exports = { authorize, authorizeAdmin, authorizeCustomer };

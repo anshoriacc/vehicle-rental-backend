@@ -3,52 +3,51 @@ const db = require("../config/db");
 
 const getVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "Lokasi", c.name AS "Kategori"
+    let sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "lokasi", c.name AS "kategori"
     FROM vehicles v JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id`;
-    // const statement = [];
 
-    // const order = query.order;
-    // let orderBy = "";
-    // if (query.by && query.by.toLowerCase() == "id") orderBy = "v.id";
-    // if (query.by && query.by.toLowerCase() == "lokasi") orderBy = "l.name";
-    // if (query.by && query.by.toLowerCase() == "kategori") orderBy = "c.name";
-    // if (order && orderBy) {
-    //   sqlQuery += " ORDER BY ? ?";
-    //   statement.push(mysql.raw(orderBy), mysql.raw(order));
-    // }
-
-    // const countQuery = `select count(*) as "count" from vehicles`;
-
-    // db.query(countQuery, (err, result) => {
-    //   if (err) return reject({ status: 500, err });
-    //   console.log(result);
-    //   const page = parseInt(query.page);
-    //   const limit = parseInt(query.limit);
-    //   const count = result[0].count;
-    //   if (query.page && query.limit) {
-    //     sqlQuery += " LIMIT ? OFFSET ?";
-    //     const offset = (page - 1) * limit;
-    //     statement.push(limit, offset);
-    //   }
-
-    //   const meta = {
-    //     next:
-    //       page == Math.ceil(count / limit)
-    //         ? null
-    //         : `/vehicles?by=id&order=asc&page=${page + 1}&limit=3`,
-    //     prev:
-    //       page == 1
-    //         ? null
-    //         : `/vehicles?by=id&order=asc&page=${page - 1}&limit=3`,
-    //     count,
-    //   };
-
-    db.query(sqlQuery, (err, result) => {
+    const statement = [];
+    const order = query.order;
+    let orderBy = "";
+    if (query.by && query.by.toLowerCase() == "id") orderBy = "v.id";
+    if (query.by && query.by.toLowerCase() == "lokasi") orderBy = "l.name";
+    if (query.by && query.by.toLowerCase() == "kategori") orderBy = "c.name";
+    if (order && orderBy) {
+      sqlQuery += ` ORDER BY ? ? `;
+      statement.push(orderBy, order);
+    }
+    const countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
+    db.query(countQuery, (err, result) => {
       if (err) return reject({ status: 500, err });
-      resolve({ status: 200, result });
+      const page = parseInt(query.page);
+      const limit = parseInt(query.limit);
+      const count = result[0].count;
+      if (query.page && query.limit) {
+        sqlQuery += ` LIMIT ? OFFSET ?`;
+        const offset = (page - 1) * limit;
+        statement.push(limit, offset);
+      }
+      const meta = {
+        next:
+          page == Math.ceil(count / limit)
+            ? null
+            : `/vehicles?by=${query.by}&order=${order}&page=${
+                page + 1
+              }&limit=${limit}`,
+        prev:
+          page == 1
+            ? null
+            : `/vehicles?by=${query.by}&order=${order}&page=${
+                page - 1
+              }&limit=${limit}`,
+        count,
+      };
+      db.query(sqlQuery, statement, (err, result) => {
+        if (err) return reject({ status: 500, err });
+        return resolve({ status: 200, result: { data: result, meta } });
+      });
     });
-    // });
   });
 };
 

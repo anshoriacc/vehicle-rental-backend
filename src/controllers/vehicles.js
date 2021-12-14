@@ -26,7 +26,7 @@ const postNewVehicle = (req, res) => {
         result,
       });
     })
-    .catch((status, err) => {
+    .catch(({ status, err }) => {
       res.status(status).json({ msg: "Terjadi Error", err });
     });
 };
@@ -59,7 +59,7 @@ const editVehicle = (req, res) => {
         result,
       });
     })
-    .catch((status, err) => {
+    .catch(({ status, err }) => {
       res.status(status).json({ msg: "Terjadi Error", err });
     });
 };
@@ -75,7 +75,7 @@ const deleteVehicle = (req, res) => {
         result,
       });
     })
-    .catch((status, err) => {
+    .catch(({ status, err }) => {
       res.status(status).json({ msg: "Terjadi Error", err });
     });
 };
