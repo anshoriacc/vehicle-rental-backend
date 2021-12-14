@@ -1,14 +1,54 @@
+const mysql = require("mysql");
 const db = require("../config/db");
 
-const getVehicle = () => {
+const getVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "Lokasi"
-    FROM vehicles v INNER JOIN locations l ON v.location_id = l.id`;
+    const sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "Lokasi", c.name AS "Kategori"
+    FROM vehicles v JOIN locations l ON v.location_id = l.id
+    JOIN categories c ON v.category_id = c.id`;
+    // const statement = [];
+
+    // const order = query.order;
+    // let orderBy = "";
+    // if (query.by && query.by.toLowerCase() == "id") orderBy = "v.id";
+    // if (query.by && query.by.toLowerCase() == "lokasi") orderBy = "l.name";
+    // if (query.by && query.by.toLowerCase() == "kategori") orderBy = "c.name";
+    // if (order && orderBy) {
+    //   sqlQuery += " ORDER BY ? ?";
+    //   statement.push(mysql.raw(orderBy), mysql.raw(order));
+    // }
+
+    // const countQuery = `select count(*) as "count" from vehicles`;
+
+    // db.query(countQuery, (err, result) => {
+    //   if (err) return reject({ status: 500, err });
+    //   console.log(result);
+    //   const page = parseInt(query.page);
+    //   const limit = parseInt(query.limit);
+    //   const count = result[0].count;
+    //   if (query.page && query.limit) {
+    //     sqlQuery += " LIMIT ? OFFSET ?";
+    //     const offset = (page - 1) * limit;
+    //     statement.push(limit, offset);
+    //   }
+
+    //   const meta = {
+    //     next:
+    //       page == Math.ceil(count / limit)
+    //         ? null
+    //         : `/vehicles?by=id&order=asc&page=${page + 1}&limit=3`,
+    //     prev:
+    //       page == 1
+    //         ? null
+    //         : `/vehicles?by=id&order=asc&page=${page - 1}&limit=3`,
+    //     count,
+    //   };
+
     db.query(sqlQuery, (err, result) => {
       if (err) return reject({ status: 500, err });
-      if (result.length == 0) return resolve({ status: 404, result });
       resolve({ status: 200, result });
     });
+    // });
   });
 };
 
@@ -28,8 +68,8 @@ const vehicleDetail = (vehicleId) => {
     FROM vehicles v
     INNER JOIN locations l ON v.location_id = l.id
     INNER JOIN categories c ON v.category_id = c.id
-    WHERE v.id = ${vehicleId}`;
-    db.query(sqlQuery, (err, result) => {
+    WHERE v.id = ?`;
+    db.query(sqlQuery, vehicleId, (err, result) => {
       if (err) return reject({ status: 500, err });
       if (result.length == 0) return resolve({ status: 404, result });
       resolve({ status: 200, result });
@@ -41,8 +81,8 @@ const editVehicle = (vehicleId, body) => {
   return new Promise((resolve, reject) => {
     const sqlQuery = `UPDATE vehicles
     SET ?
-    WHERE id = ${vehicleId}`;
-    db.query(sqlQuery, body, (err, result) => {
+    WHERE id = ?`;
+    db.query(sqlQuery, [body, vehicleId], (err, result) => {
       if (err) return reject({ status: 500, err });
       resolve({ status: 201, result });
     });
@@ -51,8 +91,8 @@ const editVehicle = (vehicleId, body) => {
 
 const deleteVehicle = (vehicleId) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `DELETE FROM vehicles WHERE id = ${vehicleId}`;
-    db.query(sqlQuery, (err, result) => {
+    const sqlQuery = `DELETE FROM vehicles WHERE id = ?`;
+    db.query(sqlQuery, vehicleId, (err, result) => {
       if (err) return reject({ status: 500, err });
       resolve({ status: 201, result });
     });

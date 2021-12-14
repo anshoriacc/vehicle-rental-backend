@@ -1,8 +1,9 @@
 const vehicleModel = require("../models/vehicles");
 
 const getVehicle = (req, res) => {
+  const { query } = req;
   vehicleModel
-    .getVehicle()
+    .getVehicle(query)
     .then(({ status, result }) => {
       if (status == 404)
         return res

@@ -1,10 +1,29 @@
-const profileModel = require("../models/profile");
+const userModel = require("../models/users");
 
-const getProfile = (req, res) => {
+const addUser = (req, res) => {
+  const { body } = req;
+  userModel
+    .addUser(body)
+    .then(({ status, result }) => {
+      res.status(status).json({
+        msg: "Penambahan User Berhasil",
+        result: {
+          ...body,
+          password: "hidden",
+          id: result.insertId,
+        },
+      });
+    })
+    .catch(({ status, err }) => {
+      res.status(status).json({ msg: "Terjadi Error", err });
+    });
+};
+
+const detailUser = (req, res) => {
   const { params } = req;
-  const profileId = params.id;
-  profileModel
-    .getProfile(profileId)
+  const userId = params.id;
+  userModel
+    .detailUser(userId)
     .then(({ status, result }) => {
       if (status == 404)
         return res.status(status).json({ msg: "User Tidak Ditemukan", result });
@@ -15,11 +34,11 @@ const getProfile = (req, res) => {
     });
 };
 
-const editProfile = (req, res) => {
+const editUser = (req, res) => {
   const { body } = req;
-  const profileId = body.id;
-  profileModel
-    .editProfile(profileId, body)
+  const userId = body.id;
+  userModel
+    .editUser(userId, body)
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Edit Profile berhasil",
@@ -34,11 +53,11 @@ const editProfile = (req, res) => {
 const deleteUser = (req, res) => {
   const { params } = req;
   const userId = params.id;
-  profileModel
+  userModel
     .deleteUser(userId)
     .then(({ status, result }) => {
       res.status(status).json({
-        msg: `Penghapusan Kendaraan dengan id = ${userId} berhasil`,
+        msg: `Penghapusan User dengan id = ${userId} berhasil`,
         result,
       });
     })
@@ -47,4 +66,4 @@ const deleteUser = (req, res) => {
     });
 };
 
-module.exports = { getProfile, editProfile, deleteUser };
+module.exports = { addUser, detailUser, editUser, deleteUser };

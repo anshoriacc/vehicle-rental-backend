@@ -1,19 +1,20 @@
 const express = require("express");
 const mainRouter = express.Router();
 
-const addUserRouter = require("./adduser");
+const userRouter = require("./users");
 const vehicleRouter = require("./vehicles");
-const profileRouter = require("./profile");
 const reservationRouter = require("./reservation");
-// const historyRouter = require("./history");
-// const favouriteRouter = require("./favourites");
+const authRouter = require("./auth");
+const upload = require("../middlewares/upload");
 
-mainRouter.use("/adduser", addUserRouter);
+mainRouter.use("/users", userRouter);
 mainRouter.use("/vehicles", vehicleRouter);
-mainRouter.use("/profile", profileRouter);
 mainRouter.use("/reservation", reservationRouter);
-// mainRouter.use("/history", historyRouter);
-// mainRouter.use("/favourites", favouriteRouter);
+mainRouter.use("/auth", authRouter);
+
+mainRouter.use("/upload", upload.single("profile"), (req, res) => {
+  res.status(200).json({ msg: "Upload berhasil", url: req.file });
+});
 
 mainRouter.get("/", (request, response) => {
   response.redirect("vehicles");
