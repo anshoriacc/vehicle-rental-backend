@@ -12,6 +12,7 @@ Vehicle Rental's backend server with Node.js and Express.js.
 - [cors](https://www.npmjs.com/package/cors)
 - [morgan](https://www.npmjs.com/package/morgan)
 - [multer](https://www.npmjs.com/package/multer)
+- [eslint](https://www.npmjs.com/package/eslint)
 
 ## Endpoint
 
@@ -19,3 +20,11 @@ Vehicle Rental's backend server with Node.js and Express.js.
 - Users `/users`
 - Vehicles `/vehicles`
 - Reservation `/reservation`
+
+## Postman Documentation
+
+<https://documenter.getpostman.com/view/18597873/UVREkQNq>
+
+## Related Projects
+
+Frontend view vehicle-rental (html-css-js) <https://github.com/anshoriacc/view_vehicle_rental>
