@@ -15,7 +15,7 @@ const register = (req, res) => {
       });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -27,7 +27,7 @@ const login = (req, res) => {
       res.status(status).json(result);
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 

@@ -15,30 +15,44 @@ const addUser = (req, res) => {
       });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
 const detailUser = (req, res) => {
-  const { params } = req;
-  const userId = params.id;
+  const { userInfo } = req;
+  const userId = userInfo.id;
   userModel
     .detailUser(userId)
     .then(({ status, result }) => {
       if (status == 404)
-        return res.status(status).json({ msg: "User Tidak Ditemukan", result });
+        return res
+          .status(status)
+          .json({ errMsg: "User Tidak Ditemukan", result });
       res.status(status).json({ result });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
 const editUser = (req, res) => {
-  const { body } = req;
-  const userId = body.id;
+  const { body, userInfo, file } = req;
+  console.log(file)
+  const userId = userInfo.id;
+  let newBody;
+
+  if (file) {
+    newBody = {
+      ...body,
+      photo: file.path,
+    };
+  } else {
+    newBody = { ...body };
+  }
+
   userModel
-    .editUser(userId, body)
+    .editUser(userId, newBody)
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Edit Profile berhasil",
@@ -46,7 +60,7 @@ const editUser = (req, res) => {
       });
     })
     .catch((status, err) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -62,7 +76,7 @@ const deleteUser = (req, res) => {
       });
     })
     .catch((status, err) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 

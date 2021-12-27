@@ -15,7 +15,7 @@ const register = (body) => {
         };
         db.query(sqlQuery, newBody, (err, result) => {
           if (err) return reject({ status: 500, err });
-          resolve({ status: 201, result });
+          resolve({ status: 201, result: { data: result } });
         });
       })
       .catch((err) => {
@@ -37,13 +37,13 @@ const login = (body) => {
         return resolve({
           status: 401,
           result: {
-            msg: "Check your email/password.",
+            msg: "Check your email/password.", //
           },
         });
       }
 
       bcrypt.compare(password, result[0].password, (err, res) => {
-        if (err || !res) return reject({ status: 500, err });
+        if (err || !res) return reject({ status: 500, err }); //salah
         const payload = {
           id: result[0].id,
           name: result[0].name,

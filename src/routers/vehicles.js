@@ -4,13 +4,22 @@ const vehicleRouter = express.Router();
 const auth = require("../middlewares/authorize");
 
 vehicleRouter.get("/", vehicleController.getVehicle);
-vehicleRouter.get("/:id", vehicleController.vehicleDetail);
-vehicleRouter.post("/", auth.authorizeAdmin, vehicleController.postNewVehicle);
-vehicleRouter.patch("/:id", auth.authorizeAdmin, vehicleController.editVehicle);
-vehicleRouter.delete(
-  "/:id",
-  auth.authorizeAdmin,
-  vehicleController.deleteVehicle
+vehicleRouter.get("/:category", vehicleController.getVehicleByCategory)
+
+vehicleRouter.get("/detail/:id", vehicleController.vehicleDetail);
+
+vehicleRouter.post(
+  "/",
+  auth.authorizeCustomer,
+  vehicleController.postNewVehicle
 );
+
+vehicleRouter.patch(
+  "/:id",
+  auth.authorizeCustomer,
+  vehicleController.editVehicle
+);
+
+vehicleRouter.delete("/:id", auth.authorize, vehicleController.deleteVehicle);
 
 module.exports = vehicleRouter;

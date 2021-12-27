@@ -7,11 +7,11 @@ const getReservation = (req, res) => {
       if (status == 404)
         return res
           .status(status)
-          .json({ msg: "Pemesanan Tidak Ditemukan", result });
+          .json({ errMsg: "Pemesanan Tidak Ditemukan", result });
       res.status(status).json({ result });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -26,7 +26,7 @@ const postReservation = (req, res) => {
       });
     })
     .catch((status, err) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 

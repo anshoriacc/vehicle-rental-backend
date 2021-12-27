@@ -7,8 +7,9 @@ const getReservation = () => {
     JOIN vehicles v ON r.vehicle_id = v.id`;
     db.query(sqlQuery, (err, result) => {
       if (err) return reject({ status: 500, err });
-      if (result.length == 0) return resolve({ status: 404, result });
-      resolve({ status: 200, result });
+      if (result.length == 0)
+        return resolve({ status: 404, result: { data: result } });
+      resolve({ status: 200, result: { data: result } });
     });
   });
 };
@@ -18,11 +19,9 @@ const postReservation = (body) => {
     const sqlQuery = `INSERT INTO reservation SET ?`;
     db.query(sqlQuery, body, (err, result) => {
       if (err) return reject({ status: 500, err });
-      resolve({ status: 201, result });
+      resolve({ status: 201, result: { data: result } });
     });
   });
 };
-
-
 
 module.exports = { getReservation, postReservation };

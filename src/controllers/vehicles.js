@@ -8,11 +8,28 @@ const getVehicle = (req, res) => {
       if (status == 404)
         return res
           .status(status)
-          .json({ msg: "Kendaraan Tidak Ditemukan", result });
+          .json({ errMsg: "Kendaraan Tidak Ditemukan", result });
       res.status(status).json({ result });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
+    });
+};
+
+const getVehicleByCategory = (req, res) => {
+  const { params } = req;
+  const category = params.category;
+  vehicleModel
+    .getVehicleByCategory(category)
+    .then(({ status, result }) => {
+      if (status == 404)
+        return res
+          .status(status)
+          .json({ errMsg: "Kendaraan Tidak Ditemukan", result });
+      res.status(status).json({ result });
+    })
+    .catch(({ status, err }) => {
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -27,7 +44,7 @@ const postNewVehicle = (req, res) => {
       });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -38,13 +55,11 @@ const vehicleDetail = (req, res) => {
     .vehicleDetail(vehicleId)
     .then(({ status, result }) => {
       if (status == 404)
-        return res
-          .status(status)
-          .json({ msg: "Kendaraan Tidak Ditemukan", result });
+        return res.status(status).json({ errMsg: "Kendaraan Tidak Ditemukan" });
       res.status(status).json({ result });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -60,7 +75,7 @@ const editVehicle = (req, res) => {
       });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
@@ -76,12 +91,13 @@ const deleteVehicle = (req, res) => {
       });
     })
     .catch(({ status, err }) => {
-      res.status(status).json({ msg: "Terjadi Error", err });
+      res.status(status).json({ errMsg: "Terjadi Error", err });
     });
 };
 
 module.exports = {
   getVehicle,
+  getVehicleByCategory,
   postNewVehicle,
   vehicleDetail,
   editVehicle,
