@@ -10,14 +10,19 @@ const logger = morgan(
   ":method :url :status :res[content-length] - :response-time ms"
 );
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Server sudah berjalan di port ${port}`);
 });
 
 const corsOptions = {
-  origin: "http://localhost:8080",
-  allowedHeaders: "x-access-token",
+  origin: [
+    "http://localhost:8080",
+    "http://localhost:3000",
+    "https://naughty-jepsen-5afced.netlify.app",
+    "https://61e62c658c22dc41c79ab082--naughty-jepsen-5afced.netlify.app"
+  ],
+  allowedHeaders: ["x-access-token", "content-type"],
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 };
 

@@ -12,7 +12,7 @@ const addUser = (body) => {
 
 const detailUser = (userId) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT id, name, email, phone, gender, address, dob
+    const sqlQuery = `SELECT id, name, email, phone, gender, address, dob, photo, created_at
       FROM users
       WHERE id = ?`;
     db.query(sqlQuery, userId, (err, result) => {

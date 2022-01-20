@@ -7,11 +7,7 @@ const register = (req, res) => {
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Registrasi Berhasil",
-        result: {
-          id: result.insertId,
-          name: body.name,
-          email: body.email,
-        },
+        result,
       });
     })
     .catch(({ status, err }) => {
@@ -24,7 +20,7 @@ const login = (req, res) => {
   authModel
     .login(body)
     .then(({ status, result }) => {
-      res.status(status).json(result);
+      res.status(status).json({ result });
     })
     .catch(({ status, err }) => {
       res.status(status).json({ errMsg: "Terjadi Error", err });

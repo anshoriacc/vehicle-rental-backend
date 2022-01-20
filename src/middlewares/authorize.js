@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authorize = (req, res, next) => {
   const token = req.header("x-access-token");
   const jwtOptions = {
-    issuer: process.env.ISSUER,
+    // issuer: process.env.ISSUER,
   };
   jwt.verify(token, process.env.SECRET_KEY, jwtOptions, (err, payload) => {
     if (err) {
@@ -17,7 +17,7 @@ const authorize = (req, res, next) => {
 const authorizeAdmin = (req, res, next) => {
   const token = req.header("x-access-token");
   const jwtOptions = {
-    issuer: process.env.ISSUER,
+    // issuer: process.env.ISSUER,
   };
   jwt.verify(token, process.env.SECRET_KEY, jwtOptions, (err, payload) => {
     if (err) {
@@ -36,7 +36,7 @@ const authorizeAdmin = (req, res, next) => {
 const authorizeCustomer = (req, res, next) => {
   const token = req.header("x-access-token");
   const jwtOptions = {
-    issuer: process.env.ISSUER,
+    // issuer: process.env.ISSUER,
   };
   jwt.verify(token, process.env.SECRET_KEY, jwtOptions, (err, payload) => {
     if (err)
@@ -51,4 +51,27 @@ const authorizeCustomer = (req, res, next) => {
   });
 };
 
-module.exports = { authorize, authorizeAdmin, authorizeCustomer };
+const authorizeOwner = (req, res, next) => {
+  const token = req.header("x-access-token");
+  const jwtOptions = {
+    // issuer: process.env.ISSUER,
+  };
+  jwt.verify(token, process.env.SECRET_KEY, jwtOptions, (err, payload) => {
+    if (err)
+      return res.status(403).json({ errMsg: "You need to login first.", err });
+    const { role_id } = payload;
+    if (role_id !== 3)
+      return res
+        .status(403)
+        .json({ errMsg: "You need to login as an Owner.", err });
+    req.userInfo = payload;
+    next();
+  });
+};
+
+module.exports = {
+  authorize,
+  authorizeAdmin,
+  authorizeCustomer,
+  authorizeOwner,
+};

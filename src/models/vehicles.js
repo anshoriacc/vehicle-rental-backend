@@ -1,49 +1,76 @@
 const mysql = require("mysql");
 const db = require("../config/db");
-const { validateLogin } = require("../middlewares/validate");
 
 const getVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    let sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "lokasi", c.name AS "kategori"
+    let { category, orderby, order, page, limit } = query;
+
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", v.price AS "harga", l.name AS "lokasi", c.name AS "kategori"
     FROM vehicles v JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id`;
 
     const statement = [];
-    const order = query.order;
-    let orderBy = "";
-    if (query.by && query.by.toLowerCase() == "id") orderBy = "v.id";
-    if (query.by && query.by.toLowerCase() == "lokasi") orderBy = "l.name";
-    if (query.by && query.by.toLowerCase() == "kategori") orderBy = "c.name";
-    if (order && orderBy) {
-      sqlQuery += ` ORDER BY ? ? `;
-      statement.push(orderBy, order);
+    let nextPage = `/vehicles?orderby=${orderby}&order=${order}&page=${
+      page + 1
+    }&limit=${limit}`;
+
+    let prevPage = `/vehicles?orderby=${orderby}&order=${order}&page=${
+      page - 1
+    }&limit=${limit}`;
+
+    let countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
+
+    if (category) {
+      category = category.toLowerCase();
+      let categoryId;
+      if (category == "bike") categoryId = 1;
+      if (category == "car") categoryId = 2;
+      if (category == "motorbike") categoryId = 3;
+
+      let categoryQuery = ` WHERE category_id = ?`;
+
+      countQuery += categoryQuery;
+
+      sqlQuery += categoryQuery;
+      statement.push(categoryId);
+
+      nextPage = `/vehicles?category=${category}&orderby=${orderby}&order=${order}&page=${
+        page + 1
+      }&limit=${limit}`;
+      prevPage = `/vehicles?category=${category}&orderby=${orderby}&order=${order}&page=${
+        page - 1
+      }&limit=${limit}`;
     }
-    const countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
-    db.query(countQuery, (err, result) => {
+
+    let orderBased = "";
+    if (orderby && orderby.toLowerCase() == "id") orderBased = "v.id";
+    if (orderby && orderby.toLowerCase() == "lokasi") orderBased = "l.id";
+    if (orderby && orderby.toLowerCase() == "kategori") orderBased = "c.id";
+    if (order && orderBased) {
+      sqlQuery += ` ORDER BY ? ? `;
+      statement.push(mysql.raw(orderBased), mysql.raw(order));
+    }
+
+    db.query(countQuery, statement, (err, result) => {
       if (err) return reject({ status: 500, err });
-      const page = parseInt(query.page);
-      const limit = parseInt(query.limit);
+
       const count = result[0].count;
-      if (query.page && query.limit) {
+
+      if (page && limit) {
         sqlQuery += ` LIMIT ? OFFSET ?`;
         const offset = (page - 1) * limit;
         statement.push(limit, offset);
       }
+
       const meta = {
-        next:
-          page == Math.ceil(count / limit)
-            ? null
-            : `/vehicles?by=${query.by}&order=${order}&page=${
-                page + 1
-              }&limit=${limit}`,
-        prev:
-          page == 1
-            ? null
-            : `/vehicles?by=${query.by}&order=${order}&page=${
-                page - 1
-              }&limit=${limit}`,
+        next: page == Math.ceil(count / limit) ? null : nextPage,
+        prev: page == 1 ? null : prevPage,
         count,
       };
+
       db.query(sqlQuery, statement, (err, result) => {
         if (err) return reject({ status: 500, err });
         return resolve({ status: 200, result: { data: result, meta } });
@@ -52,25 +79,104 @@ const getVehicle = (query) => {
   });
 };
 
-const getVehicleByCategory = (category) => {
+const getVehicleByCategory = (category, limit, page) => {
   return new Promise((resolve, reject) => {
-    let categoryId;
-    if (category && category.toLowerCase() === "bike") categoryId = 1;
-    if (category && category.toLowerCase() === "car") categoryId = 2;
-    if (category && category.toLowerCase() === "motorbike") categoryId = 3;
-    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", l.name AS "lokasi", c.name AS "kategori"
-    FROM vehicles v JOIN locations l ON v.location_id = l.id
-    JOIN categories c ON v.category_id = c.id
-    WHERE c.id = ${categoryId}`;
+    page = parseInt(page);
+    limit = parseInt(limit);
 
-    db.query(sqlQuery, (err, result) => {
+    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
+    FROM vehicles v
+    JOIN locations l ON v.location_id = l.id
+    JOIN categories c ON v.category_id = c.id`;
+
+    const statement = [];
+    let nextPage, prevPage;
+
+    let countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
+
+    if (category && category.toLowerCase() === "popular") {
+      sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, avg(r.rating) as rating
+      FROM vehicles v
+      JOIN locations l ON v.location_id = l.id
+      JOIN categories c ON v.category_id = c.id
+      JOIN reservation r ON v.id = r.vehicle_id
+      GROUP BY v.id
+      ORDER BY sum(r.rating) DESC`;
+
+      countQuery = `SELECT COUNT(*) as count
+      FROM (${sqlQuery}) as popularQuery`;
+    }
+
+    let categoryId;
+    if (
+      category.toLowerCase() === "bike" ||
+      category.toLowerCase() === "car" ||
+      category.toLowerCase() === "motorbike"
+    ) {
+      if (category.toLowerCase() === "bike") {
+        categoryId = 1;
+        statement.push(categoryId);
+      }
+      if (category.toLowerCase() === "car") {
+        categoryId = 2;
+        statement.push(categoryId);
+      }
+      if (category.toLowerCase() === "motorbike") {
+        categoryId = 3;
+        statement.push(categoryId);
+      }
+      sqlQuery += `
+        WHERE v.category_id = ?
+        ORDER BY v.id ASC`;
+      countQuery += ` WHERE category_id = ?`;
+    }
+
+    if (!limit) sqlQuery += ` LIMIT 16`;
+
+    if (limit && page) {
+      const offset = (page - 1) * limit;
+      statement.push(limit);
+      statement.push(offset);
+      sqlQuery += ` LIMIT ? OFFSET ?`;
+      nextPage = `/vehicles/${category}?limit=${limit}&page=${page + 1}`;
+      prevPage = `/vehicles/${category}?limit=${limit}&page=${page - 1}`;
+    }
+
+    // console.log("sql", sqlQuery);
+    // console.log("count", countQuery);
+
+    // console.log("statement", statement);
+    db.query(countQuery, categoryId, (err, result) => {
+      if (err) return reject({ status: 500, err });
+
+      const count = result[0].count;
+      const meta = {
+        next: page == Math.ceil(count / limit) ? null : nextPage,
+        prev: page == 1 ? null : prevPage,
+        count: count,
+      };
+
+      db.query(sqlQuery, statement, (err, result) => {
+        if (err) return reject({ status: 500, err });
+        return resolve({ status: 200, result: { data: result, meta } });
+      });
+    });
+  });
+};
+
+const searchVehicle = (query) => {
+  return new Promise((resolve, reject) => {
+    const { keyword } = query;
+    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
+    FROM vehicles v
+    JOIN locations l ON v.location_id = l.id
+    JOIN categories c ON v.category_id = c.id
+    WHERE v.name LIKE "%?%"`;
+    console.log(query);
+    db.query(sqlQuery, keyword, (err, result) => {
       if (err) return reject({ status: 500, err });
       return resolve({ status: 200, result: { data: result } });
     });
-
-    if (category && category.toLowerCase() === "popular") {
-      sqlQuery = `SELECT v.id, v.name AS "kendaraan", l.name AS "lokasi", c.name AS "kategori", `;
-    }
   });
 };
 
@@ -86,7 +192,7 @@ const postNewVehicle = (body) => {
 
 const vehicleDetail = (vehicleId) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT v.id, v.name AS "Kendaraan", l.name AS "Lokasi", c.name AS "Kategori", v.price AS "Harga", v.stock AS "Stok"
+    const sqlQuery = `SELECT v.id, v.name AS "name", l.name AS "location", c.name AS "category", v.price AS "price", v.stock AS "stock"
     FROM vehicles v
     INNER JOIN locations l ON v.location_id = l.id
     INNER JOIN categories c ON v.category_id = c.id
@@ -124,6 +230,7 @@ const deleteVehicle = (vehicleId) => {
 module.exports = {
   getVehicle,
   getVehicleByCategory,
+  searchVehicle,
   postNewVehicle,
   vehicleDetail,
   editVehicle,

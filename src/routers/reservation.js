@@ -4,14 +4,27 @@ const reservationRouter = express.Router();
 const auth = require("../middlewares/authorize");
 
 reservationRouter.get(
-  "/",
-  auth.authorize,
-  reservationController.getReservation
+  "/all",
+  auth.authorizeAdmin,
+  reservationController.getReservationAdmin
 );
+
+reservationRouter.get(
+  "/",
+  auth.authorizeCustomer,
+  reservationController.getReservationCustomer
+);
+
 reservationRouter.post(
   "/",
   auth.authorizeCustomer,
-  reservationController.postReservation
+  reservationController.makeReservation
+);
+
+reservationRouter.patch(
+  "/:id/rate",
+  auth.authorizeCustomer,
+  reservationController.rate
 );
 
 module.exports = reservationRouter;

@@ -17,10 +17,27 @@ const getVehicle = (req, res) => {
 };
 
 const getVehicleByCategory = (req, res) => {
-  const { params } = req;
-  const category = params.category;
+  const category = req.params.category;
+  const { page, limit } = req.query;
+
   vehicleModel
-    .getVehicleByCategory(category)
+    .getVehicleByCategory(category, limit, page)
+    .then(({ status, result }) => {
+      if (status == 404)
+        return res
+          .status(status)
+          .json({ errMsg: "Kendaraan Tidak Ditemukan", result });
+      res.status(status).json({ result });
+    })
+    .catch(({ status, err }) => {
+      res.status(status).json({ errMsg: "Terjadi Error", err });
+    });
+};
+
+const searchVehicle = (req, res) => {
+  const { query } = req;
+  vehicleModel
+    .searchVehicle(query)
     .then(({ status, result }) => {
       if (status == 404)
         return res
@@ -34,9 +51,13 @@ const getVehicleByCategory = (req, res) => {
 };
 
 const postNewVehicle = (req, res) => {
-  const { body } = req;
+  const { body, userInfo } = req;
+  const userId = userInfo.id;
+
+  const newBody = { ...body, user_id: userId };
+
   vehicleModel
-    .postNewVehicle(body)
+    .postNewVehicle(newBody)
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Penambahan Kendaraan Berhasil",
@@ -64,8 +85,18 @@ const vehicleDetail = (req, res) => {
 };
 
 const editVehicle = (req, res) => {
-  const { body } = req;
+  const { body, file } = req;
   const vehicleId = body.id;
+
+  if (file) {
+    newBody = {
+      ...body,
+      photo: file.path.slice(7),
+    };
+  } else {
+    newBody = { ...body };
+  }
+
   vehicleModel
     .editVehicle(vehicleId, body)
     .then(({ status, result }) => {
@@ -98,6 +129,7 @@ const deleteVehicle = (req, res) => {
 module.exports = {
   getVehicle,
   getVehicleByCategory,
+  searchVehicle,
   postNewVehicle,
   vehicleDetail,
   editVehicle,

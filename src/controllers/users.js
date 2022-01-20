@@ -38,14 +38,13 @@ const detailUser = (req, res) => {
 
 const editUser = (req, res) => {
   const { body, userInfo, file } = req;
-  console.log(file)
   const userId = userInfo.id;
   let newBody;
 
   if (file) {
     newBody = {
       ...body,
-      photo: file.path,
+      photo: file.path.slice(7),
     };
   } else {
     newBody = { ...body };
@@ -56,7 +55,6 @@ const editUser = (req, res) => {
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Edit Profile berhasil",
-        result,
       });
     })
     .catch((status, err) => {
@@ -72,7 +70,6 @@ const deleteUser = (req, res) => {
     .then(({ status, result }) => {
       res.status(status).json({
         msg: `Penghapusan User dengan id = ${userId} berhasil`,
-        result,
       });
     })
     .catch((status, err) => {

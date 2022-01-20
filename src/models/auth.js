@@ -14,8 +14,17 @@ const register = (body) => {
           password: hashedPassword,
         };
         db.query(sqlQuery, newBody, (err, result) => {
-          if (err) return reject({ status: 500, err });
-          resolve({ status: 201, result: { data: result } });
+          if (err && err.errno === 1062)
+            return reject({
+              status: 500,
+              err: "Email sudah terdaftar, gunakan alamat email yang lain.",
+            });
+          resolve({
+            status: 201,
+            result: {
+              data: { id: result.insertId, name: body.name, email: body.email },
+            },
+          });
         });
       })
       .catch((err) => {
@@ -43,20 +52,37 @@ const login = (body) => {
       }
 
       bcrypt.compare(password, result[0].password, (err, res) => {
-        if (err || !res) return reject({ status: 500, err }); //salah
+        if (err) return reject({ status: 500, err });
+        if (res === false) {
+          return reject({ status: 401, err: "Wrong email / password." });
+        }
+        console.log(res);
         const payload = {
           id: result[0].id,
           name: result[0].name,
           email: result[0].email,
+          photo: result[0].photo,
           role_id: result[0].role_id,
         };
         const jwtOptions = {
           expiresIn: "15m",
-          issuer: process.env.ISSUER,
+          // issuer: process.env.ISSUER,
         };
         jwt.sign(payload, process.env.SECRET_KEY, jwtOptions, (err, token) => {
           if (err) reject({ status: 500, err });
-          resolve({ status: 200, result: { token } });
+          resolve({
+            status: 200,
+            result: {
+              data: {
+                token: token,
+                id: result[0].id,
+                name: result[0].name,
+                email: result[0].email,
+                photo: result[0].photo,
+                role_id: result[0].role_id,
+              },
+            },
+          });
         });
       });
     });
