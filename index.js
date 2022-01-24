@@ -20,7 +20,6 @@ const corsOptions = {
     "http://localhost:8080",
     "http://localhost:3000",
     "https://naughty-jepsen-5afced.netlify.app",
-    "https://61e62c658c22dc41c79ab082--naughty-jepsen-5afced.netlify.app",
   ],
   allowedHeaders: ["x-access-token", "content-type"],
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
