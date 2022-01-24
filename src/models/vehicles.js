@@ -172,7 +172,7 @@ const searchVehicle = (query) => {
     JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id
     WHERE v.name LIKE "%?%"`;
-    console.log(query);
+    // console.log(query);
     db.query(sqlQuery, keyword, (err, result) => {
       if (err) return reject({ status: 500, err });
       return resolve({ status: 200, result: { data: result } });

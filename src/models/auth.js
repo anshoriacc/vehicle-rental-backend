@@ -42,7 +42,7 @@ const login = (body) => {
         return reject({ status: 500, err });
       }
       if (result.length == 0) {
-        console.log(result);
+        // console.log(result);
         return resolve({
           status: 401,
           result: {
@@ -56,7 +56,7 @@ const login = (body) => {
         if (res === false) {
           return reject({ status: 401, err: "Wrong email / password." });
         }
-        console.log(res);
+        // console.log(res);
         const payload = {
           id: result[0].id,
           name: result[0].name,

@@ -51,17 +51,37 @@ const searchVehicle = (req, res) => {
 };
 
 const postNewVehicle = (req, res) => {
-  const { body, userInfo } = req;
+  // console.log(req);
+  const { body, userInfo, files } = req;
   const userId = userInfo.id;
 
-  const newBody = { ...body, user_id: userId };
+  const newFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    newFiles.push(files[i].path.slice(7));
+  }
+  // console.log(JSON.stringify(newFiles));
+  // console.log(files[1].path);
+  // console.log(files.path);
+  // console.log(JSON.stringify(files));
+
+  if (files) {
+    const photo = JSON.stringify(newFiles);
+    newBody = {
+      ...body,
+      photo: photo,
+      user_id: userId,
+    };
+  } else {
+    newBody = { ...body, user_id: userId };
+  }
+  // const newBody = { ...body, user_id: userId };
 
   vehicleModel
     .postNewVehicle(newBody)
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Penambahan Kendaraan Berhasil",
-        result,
+        result:{...newBody, id: result.insertId}
       });
     })
     .catch(({ status, err }) => {
@@ -85,13 +105,15 @@ const vehicleDetail = (req, res) => {
 };
 
 const editVehicle = (req, res) => {
-  const { body, file } = req;
-  const vehicleId = body.id;
+  console.log(req);
+  const { body, files } = req;
+  const vehicleId = params.id;
 
-  if (file) {
+  if (files) {
+    const newFiles = JSON.stringify(files.map((item) => item.slice(7)));
     newBody = {
       ...body,
-      photo: file.path.slice(7),
+      photo: newFiles,
     };
   } else {
     newBody = { ...body };
