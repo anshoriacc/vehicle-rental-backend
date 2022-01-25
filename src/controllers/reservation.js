@@ -34,6 +34,7 @@ const getReservationCustomer = (req, res) => {
 };
 
 const makeReservation = (req, res) => {
+  // console.log(req);
   const { userInfo, body } = req;
   const userId = userInfo.id;
 
