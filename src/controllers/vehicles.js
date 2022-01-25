@@ -81,7 +81,7 @@ const postNewVehicle = (req, res) => {
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Penambahan Kendaraan Berhasil",
-        result:{...newBody, id: result.insertId}
+        result: { ...newBody, id: result.insertId },
       });
     })
     .catch(({ status, err }) => {
@@ -105,22 +105,31 @@ const vehicleDetail = (req, res) => {
 };
 
 const editVehicle = (req, res) => {
-  console.log(req);
-  const { body, files } = req;
+  // console.log(req);
+  const { body, files, params } = req;
   const vehicleId = params.id;
 
+  const newFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    newFiles.push(files[i].path.slice(7));
+  }
+  // console.log(JSON.stringify(newFiles));
+  // console.log(files[1].path);
+  // console.log(files.path);
+  // console.log(JSON.stringify(files));
+
   if (files) {
-    const newFiles = JSON.stringify(files.map((item) => item.slice(7)));
+    const photo = JSON.stringify(newFiles);
     newBody = {
       ...body,
-      photo: newFiles,
+      photo: photo,
     };
   } else {
-    newBody = { ...body };
+    newBody = { ...body};
   }
 
   vehicleModel
-    .editVehicle(vehicleId, body)
+    .editVehicle(vehicleId, newBody)
     .then(({ status, result }) => {
       res.status(status).json({
         msg: "Edit Kendaraan berhasil",
