@@ -65,7 +65,7 @@ const login = (body) => {
           role_id: result[0].role_id,
         };
         const jwtOptions = {
-          expiresIn: "15m",
+          // expiresIn: "15m",
           // issuer: process.env.ISSUER,
         };
         jwt.sign(payload, process.env.SECRET_KEY, jwtOptions, (err, token) => {

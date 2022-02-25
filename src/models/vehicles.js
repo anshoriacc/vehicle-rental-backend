@@ -1,9 +1,9 @@
-const mysql = require("mysql");
-const db = require("../config/db");
+const mysql = require('mysql');
+const db = require('../config/db');
 
 const getVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    let { category, orderby, order, page, limit } = query;
+    let {category, orderby, order, page, limit} = query;
 
     page = parseInt(page);
     limit = parseInt(limit);
@@ -26,9 +26,9 @@ const getVehicle = (query) => {
     if (category) {
       category = category.toLowerCase();
       let categoryId;
-      if (category == "bike") categoryId = 1;
-      if (category == "car") categoryId = 2;
-      if (category == "motorbike") categoryId = 3;
+      if (category == 'bike') categoryId = 1;
+      if (category == 'car') categoryId = 2;
+      if (category == 'motorbike') categoryId = 3;
 
       let categoryQuery = ` WHERE category_id = ?`;
 
@@ -45,17 +45,17 @@ const getVehicle = (query) => {
       }&limit=${limit}`;
     }
 
-    let orderBased = "";
-    if (orderby && orderby.toLowerCase() == "id") orderBased = "v.id";
-    if (orderby && orderby.toLowerCase() == "lokasi") orderBased = "l.id";
-    if (orderby && orderby.toLowerCase() == "kategori") orderBased = "c.id";
+    let orderBased = '';
+    if (orderby && orderby.toLowerCase() == 'id') orderBased = 'v.id';
+    if (orderby && orderby.toLowerCase() == 'lokasi') orderBased = 'l.id';
+    if (orderby && orderby.toLowerCase() == 'kategori') orderBased = 'c.id';
     if (order && orderBased) {
       sqlQuery += ` ORDER BY ? ? `;
       statement.push(mysql.raw(orderBased), mysql.raw(order));
     }
 
     db.query(countQuery, statement, (err, result) => {
-      if (err) return reject({ status: 500, err });
+      if (err) return reject({status: 500, err});
 
       const count = result[0].count;
 
@@ -72,8 +72,8 @@ const getVehicle = (query) => {
       };
 
       db.query(sqlQuery, statement, (err, result) => {
-        if (err) return reject({ status: 500, err });
-        return resolve({ status: 200, result: { data: result, meta } });
+        if (err) return reject({status: 500, err});
+        return resolve({status: 200, result: {data: result, meta}});
       });
     });
   });
@@ -94,7 +94,7 @@ const getVehicleByCategory = (category, limit, page) => {
 
     let countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
 
-    if (category && category.toLowerCase() === "popular") {
+    if (category && category.toLowerCase() === 'popular') {
       sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, avg(r.rating) as rating
       FROM vehicles v
       JOIN locations l ON v.location_id = l.id
@@ -109,19 +109,19 @@ const getVehicleByCategory = (category, limit, page) => {
 
     let categoryId;
     if (
-      category.toLowerCase() === "bike" ||
-      category.toLowerCase() === "car" ||
-      category.toLowerCase() === "motorbike"
+      category.toLowerCase() === 'bike' ||
+      category.toLowerCase() === 'car' ||
+      category.toLowerCase() === 'motorbike'
     ) {
-      if (category.toLowerCase() === "bike") {
+      if (category.toLowerCase() === 'bike') {
         categoryId = 1;
         statement.push(categoryId);
       }
-      if (category.toLowerCase() === "car") {
+      if (category.toLowerCase() === 'car') {
         categoryId = 2;
         statement.push(categoryId);
       }
-      if (category.toLowerCase() === "motorbike") {
+      if (category.toLowerCase() === 'motorbike') {
         categoryId = 3;
         statement.push(categoryId);
       }
@@ -147,7 +147,7 @@ const getVehicleByCategory = (category, limit, page) => {
 
     // console.log("statement", statement);
     db.query(countQuery, categoryId, (err, result) => {
-      if (err) return reject({ status: 500, err });
+      if (err) return reject({status: 500, err});
 
       const count = result[0].count;
       const meta = {
@@ -157,8 +157,8 @@ const getVehicleByCategory = (category, limit, page) => {
       };
 
       db.query(sqlQuery, statement, (err, result) => {
-        if (err) return reject({ status: 500, err });
-        return resolve({ status: 200, result: { data: result, meta } });
+        if (err) return reject({status: 500, err});
+        return resolve({status: 200, result: {data: result, meta}});
       });
     });
   });
@@ -166,16 +166,16 @@ const getVehicleByCategory = (category, limit, page) => {
 
 const searchVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    const { keyword } = query;
+    const {keyword} = query;
     let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
     FROM vehicles v
     JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id
-    WHERE v.name LIKE "%?%"`;
+    WHERE v.name LIKE '%?%'`;
     // console.log(query);
     db.query(sqlQuery, keyword, (err, result) => {
-      if (err) return reject({ status: 500, err });
-      return resolve({ status: 200, result: { data: result } });
+      if (err) return reject({status: 500, err});
+      return resolve({status: 200, result: {data: result}});
     });
   });
 };
@@ -184,8 +184,8 @@ const postNewVehicle = (body) => {
   return new Promise((resolve, reject) => {
     const sqlQuery = `INSERT INTO vehicles SET ?`;
     db.query(sqlQuery, body, (err, result) => {
-      if (err) return reject({ status: 500, err });
-      resolve({ status: 201, result: { data: result } });
+      if (err) return reject({status: 500, err});
+      resolve({status: 201, result: {data: {...body, id: result.insertId}}});
     });
   });
 };
@@ -198,9 +198,9 @@ const vehicleDetail = (vehicleId) => {
     INNER JOIN categories c ON v.category_id = c.id
     WHERE v.id = ?`;
     db.query(sqlQuery, vehicleId, (err, result) => {
-      if (err) return reject({ status: 500, err });
-      if (result.length == 0) return resolve({ status: 404, result });
-      resolve({ status: 200, result: { data: result } });
+      if (err) return reject({status: 500, err});
+      if (result.length == 0) return resolve({status: 404, result});
+      resolve({status: 200, result: {data: result}});
     });
   });
 };
@@ -211,8 +211,8 @@ const editVehicle = (vehicleId, body) => {
     SET ?
     WHERE id = ?`;
     db.query(sqlQuery, [body, vehicleId], (err, result) => {
-      if (err) return reject({ status: 500, err });
-      resolve({ status: 201, result: { data: result } });
+      if (err) return reject({status: 500, err});
+      resolve({status: 201, result: {data: body}});
     });
   });
 };
@@ -221,8 +221,8 @@ const deleteVehicle = (vehicleId) => {
   return new Promise((resolve, reject) => {
     const sqlQuery = `DELETE FROM vehicles WHERE id = ?`;
     db.query(sqlQuery, vehicleId, (err, result) => {
-      if (err) return reject({ status: 500, err });
-      resolve({ status: 201, result: { data: result } });
+      if (err) return reject({status: 500, err});
+      resolve({status: 201, result: {data: result}});
     });
   });
 };
