@@ -81,6 +81,7 @@ const getVehicle = (query) => {
 
 const getVehicleByCategory = (category, limit, page) => {
   return new Promise((resolve, reject) => {
+    console.log('category', category);
     page = parseInt(page);
     limit = parseInt(limit);
 
@@ -169,7 +170,7 @@ const searchVehicle = (query) => {
     const {keyword} = query;
 
     const search = `'%${keyword}%'`;
-    console.log(search);
+
     let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
     FROM vehicles v
     JOIN locations l ON v.location_id = l.id
@@ -188,7 +189,10 @@ const postNewVehicle = (body) => {
     const sqlQuery = `INSERT INTO vehicles SET ?`;
     db.query(sqlQuery, body, (err, result) => {
       if (err) return reject({status: 500, err});
-      resolve({status: 201, result: {data: {...body, id: result.insertId}}});
+      return resolve({
+        status: 201,
+        result: {data: {...body, id: result.insertId}},
+      });
     });
   });
 };
