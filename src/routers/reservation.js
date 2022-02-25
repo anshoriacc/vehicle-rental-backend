@@ -5,7 +5,7 @@ const auth = require("../middlewares/authorize");
 
 reservationRouter.get(
   "/all",
-  auth.authorizeAdmin,
+  auth.authorizeOwner,
   reservationController.getReservationAdmin
 );
 
