@@ -169,7 +169,7 @@ const searchVehicle = (query) => {
     const {keyword} = query;
 
     const search = `'%${keyword}%'`;
-
+    console.log(search);
     let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
     FROM vehicles v
     JOIN locations l ON v.location_id = l.id
