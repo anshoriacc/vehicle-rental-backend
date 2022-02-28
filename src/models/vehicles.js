@@ -8,12 +8,12 @@ const getVehicle = (query) => {
     page = parseInt(page);
     limit = parseInt(limit);
 
-    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", v.price AS "harga", l.name AS "lokasi", c.name AS "kategori"
+    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", v.price AS "harga", l.name AS "lokasi", c.name AS "kategori" v.photo
     FROM vehicles v JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id`;
 
     const statement = [];
-    let nextPage = `/vehicles?orderby=${orderby}&order=${order}&page=${
+    let nextPage = `/vehicles?orderby=${orderby}&order=${order}&pa ge=${
       page + 1
     }&limit=${limit}`;
 
