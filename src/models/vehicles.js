@@ -8,7 +8,7 @@ const getVehicle = (query) => {
     page = parseInt(page);
     limit = parseInt(limit);
 
-    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", v.price AS "harga", l.name AS "lokasi", c.name AS "kategori", v.photo
+    let sqlQuery = `SELECT v.id, v.name AS "kendaraan", v.price AS "harga", l.name AS "lokasi", c.name AS "kategori", v.photo, v.stock, v.rating
     FROM vehicles v JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id`;
 
@@ -85,7 +85,7 @@ const getVehicleByCategory = (category, limit, page) => {
     page = parseInt(page);
     limit = parseInt(limit);
 
-    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
+    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.stock, v.rating
     FROM vehicles v
     JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id`;
@@ -171,7 +171,7 @@ const searchVehicle = (query) => {
 
     const search = `'%${keyword}%'`;
 
-    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.rating
+    let sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.stock, v.rating
     FROM vehicles v
     JOIN locations l ON v.location_id = l.id
     JOIN categories c ON v.category_id = c.id
