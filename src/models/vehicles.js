@@ -96,7 +96,7 @@ const getVehicleByCategory = (category, limit, page) => {
     let countQuery = `SELECT COUNT(*) AS "count" from vehicles`;
 
     if (category && category.toLowerCase() === 'popular') {
-      sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, avg(r.rating) as rating
+      sqlQuery = `SELECT v.id, v.name as vehicle, l.name as location, c.name as category, v.price, v.photo, v.stock, avg(r.rating) as rating
       FROM vehicles v
       JOIN locations l ON v.location_id = l.id
       JOIN categories c ON v.category_id = c.id
