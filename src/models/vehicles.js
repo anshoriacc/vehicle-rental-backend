@@ -199,7 +199,7 @@ const postNewVehicle = (body) => {
 
 const vehicleDetail = (vehicleId) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT v.id, v.name AS "name", l.name AS "location", c.name AS "category", v.price AS "price", v.stock AS "stock", v.photo
+    const sqlQuery = `SELECT v.id, v.name AS "name", l.name AS "location", c.name AS "category", v.price AS "price", v.stock AS "stock", v.photo, v.user_id
     FROM vehicles v
     INNER JOIN locations l ON v.location_id = l.id
     INNER JOIN categories c ON v.category_id = c.id
