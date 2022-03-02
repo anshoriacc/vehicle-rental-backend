@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 const getReservationAdmin = () => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT r.id, u.name AS "Pemesan", v.name AS "Kendaraan", r.quantity, r.start_date, r.return_date, r.payment
+    const sqlQuery = `SELECT r.id, u.name AS "Pemesan", v.name AS "vehicle", r.quantity, r.start_date, r.return_date, r.payment
     FROM reservation r JOIN users u ON r.user_id = u.id
     JOIN vehicles v ON r.vehicle_id = v.id`;
     db.query(sqlQuery, (err, result) => {
