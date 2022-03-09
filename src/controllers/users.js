@@ -1,27 +1,6 @@
 const userModel = require('../models/users');
 const resHelper = require('../helpers/response');
 
-const addUser = (req, res) => {
-  const {body} = req;
-  userModel
-    .addUser(body)
-    .then(({status, result}) => {
-      return resHelper.success(res, status, result);
-      // res.status(status).json({
-      //   msg: 'Penambahan User Berhasil',
-      //   result: {
-      //     ...body,
-      //     password: 'hidden',
-      //     id: result.insertId,
-      //   },
-      // });
-    })
-    .catch(({status, err}) => {
-      return resHelper.error(res, status, err);
-      // res.status(status).json({errMsg: 'Terjadi Error', err});
-    });
-};
-
 const detailUser = (req, res) => {
   const {userInfo} = req;
   const userId = userInfo.id;
@@ -29,15 +8,9 @@ const detailUser = (req, res) => {
     .detailUser(userId)
     .then(({status, result}) => {
       return resHelper.success(res, status, result);
-      // if (status == 404)
-      //   return res
-      //     .status(status)
-      //     .json({errMsg: 'User Tidak Ditemukan', result});
-      // res.status(status).json({result});
     })
     .catch(({status, err}) => {
       return resHelper.error(res, status, err);
-      // res.status(status).json({errMsg: 'Terjadi Error', err});
     });
 };
 
@@ -58,28 +31,41 @@ const editUser = (req, res) => {
   userModel
     .editUser(userId, newBody)
     .then(({status, result}) => {
-      res.status(status).json({
-        msg: 'Edit Profile berhasil',
-      });
+      return resHelper.success(res, status, result);
     })
     .catch((status, err) => {
-      res.status(status).json({errMsg: 'Terjadi Error', err});
+      return resHelper.error(res, status, err);
     });
 };
 
-const deleteUser = (req, res) => {
-  const {params} = req;
-  const userId = params.id;
-  userModel
-    .deleteUser(userId)
-    .then(({status, result}) => {
-      res.status(status).json({
-        msg: `Penghapusan User dengan id = ${userId} berhasil`,
-      });
-    })
-    .catch((status, err) => {
-      res.status(status).json({errMsg: 'Terjadi Error', err});
-    });
-};
+// const addUser = (req, res) => {
+//   const {body} = req;
+//   userModel
+//     .addUser(body)
+//     .then(({status, result}) => {
+//       return resHelper.success(res, status, result);
+//     })
+//     .catch(({status, err}) => {
+//       return resHelper.error(res, status, err);
+//     });
+// };
 
-module.exports = {addUser, detailUser, editUser, deleteUser};
+// const deleteUser = (req, res) => {
+//   const {params} = req;
+//   const userId = params.id;
+//   userModel
+//     .deleteUser(userId)
+//     .then(({status, result}) => {
+//       res.status(status).json({
+//         msg: `Penghapusan User dengan id = ${userId} berhasil`,
+//       });
+//     })
+//     .catch((status, err) => {
+//       res.status(status).json({errMsg: 'Terjadi Error', err});
+//     });
+// };
+
+module.exports = {
+  detailUser,
+  editUser,
+};
