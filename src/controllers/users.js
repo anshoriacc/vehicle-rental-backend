@@ -38,33 +38,6 @@ const editUser = (req, res) => {
     });
 };
 
-// const addUser = (req, res) => {
-//   const {body} = req;
-//   userModel
-//     .addUser(body)
-//     .then(({status, result}) => {
-//       return resHelper.success(res, status, result);
-//     })
-//     .catch(({status, err}) => {
-//       return resHelper.error(res, status, err);
-//     });
-// };
-
-// const deleteUser = (req, res) => {
-//   const {params} = req;
-//   const userId = params.id;
-//   userModel
-//     .deleteUser(userId)
-//     .then(({status, result}) => {
-//       res.status(status).json({
-//         msg: `Penghapusan User dengan id = ${userId} berhasil`,
-//       });
-//     })
-//     .catch((status, err) => {
-//       res.status(status).json({errMsg: 'Terjadi Error', err});
-//     });
-// };
-
 module.exports = {
   detailUser,
   editUser,

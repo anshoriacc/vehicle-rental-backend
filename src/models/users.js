@@ -13,7 +13,7 @@ const detailUser = (userId) => {
         });
       resolve({
         status: 200,
-        result: {msg: 'Success get detail user.', data: result.data[0]},
+        result: {msg: 'Success get detail user.', data: result.data},
       });
     });
   });
@@ -37,30 +37,6 @@ const editUser = (userId, body) => {
     });
   });
 };
-
-// const addUser = (body) => {
-//   return new Promise((resolve, reject) => {
-//     const sqlQuery = `INSERT INTO users SET ?`;
-//     db.query(sqlQuery, body, (err, result) => {
-//       if (err)
-//         return reject({
-//           status: 500,
-//           err: {msg: 'Something went wrong.', data: null},
-//         });
-//       return resolve({status: 201, result: {data: result}});
-//     });
-//   });
-// };
-
-// const deleteUser = (userId) => {
-//   return new Promise((resolve, reject) => {
-//     const sqlQuery = `DELETE FROM users WHERE id = ?`;
-//     db.query(sqlQuery, userId, (err, result) => {
-//       if (err) return reject({status: 500, err});
-//       resolve({status: 201, result: {data: result}});
-//     });
-//   });
-// };
 
 module.exports = {
   detailUser,
