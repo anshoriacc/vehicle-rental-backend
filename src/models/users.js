@@ -13,7 +13,7 @@ const detailUser = (userId) => {
         });
       resolve({
         status: 200,
-        result: {msg: 'Success get detail user.', data: result.data},
+        result: {msg: 'Success get detail user.', data: result},
       });
     });
   });
