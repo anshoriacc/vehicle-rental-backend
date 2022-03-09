@@ -1,6 +1,6 @@
-const db = require("../config/db");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const db = require('../config/db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const register = (body) => {
   return new Promise((resolve, reject) => {
@@ -13,50 +13,66 @@ const register = (body) => {
           ...body,
           password: hashedPassword,
         };
+
         db.query(sqlQuery, newBody, (err, result) => {
           if (err && err.errno === 1062)
             return reject({
-              status: 500,
-              err: "Email sudah terdaftar, gunakan alamat email yang lain.",
+              status: 400,
+              err: {
+                msg: 'Email address already registered, use another email address.',
+                data: null,
+              },
             });
-          resolve({
+
+          return resolve({
             status: 201,
             result: {
-              data: { id: result.insertId, name: body.name, email: body.email },
+              msg: 'Registration success.',
+              data: {id: result.insertId, name: body.name, email: body.email},
             },
           });
         });
       })
       .catch((err) => {
-        reject({ status: 500, err });
+        return reject({
+          status: 500,
+          err: {msg: 'Something went wrong.', data: null},
+        });
       });
   });
 };
 
 const login = (body) => {
   return new Promise((resolve, reject) => {
-    const { email, password } = body;
+    const {email, password} = body;
     const sqlQuery = `SELECT * FROM users WHERE ?`;
-    db.query(sqlQuery, { email }, (err, result) => {
+    db.query(sqlQuery, {email}, (err, result) => {
       if (err) {
-        return reject({ status: 500, err });
+        return reject({
+          status: 500,
+          err: {msg: 'Something went wrong.', data: null},
+        });
       }
       if (result.length == 0) {
-        // console.log(result);
-        return resolve({
+        return reject({
           status: 401,
-          result: {
-            msg: "Check your email/password.", //
-          },
+          err: {msg: 'Check your email/password.', data: null},
         });
       }
 
       bcrypt.compare(password, result[0].password, (err, res) => {
-        if (err) return reject({ status: 500, err });
+        if (err)
+          return reject({
+            status: 500,
+            err: {msg: 'Something went wrong.', data: null},
+          });
         if (res === false) {
-          return reject({ status: 401, err: "Wrong email / password." });
+          return reject({
+            status: 401,
+            err: {msg: 'Wrong email/password', data: null},
+          });
         }
-        // console.log(res);
+
         const payload = {
           id: result[0].id,
           name: result[0].name,
@@ -68,11 +84,17 @@ const login = (body) => {
           // expiresIn: "15m",
           // issuer: process.env.ISSUER,
         };
+
         jwt.sign(payload, process.env.SECRET_KEY, jwtOptions, (err, token) => {
-          if (err) reject({ status: 500, err });
-          resolve({
+          if (err)
+            return reject({
+              status: 500,
+              err: {msg: 'Login failed.', data: null},
+            });
+          return resolve({
             status: 200,
             result: {
+              msg: 'Login success',
               data: {
                 token: token,
                 id: result[0].id,
@@ -93,4 +115,4 @@ const logout = (token) => {
   return new Promise((resolve, reject) => {});
 };
 
-module.exports = { register, login, logout };
+module.exports = {register, login, logout};
