@@ -28,7 +28,12 @@ const register = (body) => {
             status: 201,
             result: {
               msg: 'Registration success.',
-              data: {id: result.insertId, name: body.name, email: body.email},
+              data: {
+                id: result.insertId,
+                name: body.name,
+                email: body.email,
+                roles: body.role_id,
+              },
             },
           });
         });
