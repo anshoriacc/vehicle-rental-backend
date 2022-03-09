@@ -1,43 +1,48 @@
-const userModel = require("../models/users");
+const userModel = require('../models/users');
+const resHelper = require('../helpers/response');
 
 const addUser = (req, res) => {
-  const { body } = req;
+  const {body} = req;
   userModel
     .addUser(body)
-    .then(({ status, result }) => {
-      res.status(status).json({
-        msg: "Penambahan User Berhasil",
-        result: {
-          ...body,
-          password: "hidden",
-          id: result.insertId,
-        },
-      });
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+      // res.status(status).json({
+      //   msg: 'Penambahan User Berhasil',
+      //   result: {
+      //     ...body,
+      //     password: 'hidden',
+      //     id: result.insertId,
+      //   },
+      // });
     })
-    .catch(({ status, err }) => {
-      res.status(status).json({ errMsg: "Terjadi Error", err });
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+      // res.status(status).json({errMsg: 'Terjadi Error', err});
     });
 };
 
 const detailUser = (req, res) => {
-  const { userInfo } = req;
+  const {userInfo} = req;
   const userId = userInfo.id;
   userModel
     .detailUser(userId)
-    .then(({ status, result }) => {
-      if (status == 404)
-        return res
-          .status(status)
-          .json({ errMsg: "User Tidak Ditemukan", result });
-      res.status(status).json({ result });
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+      // if (status == 404)
+      //   return res
+      //     .status(status)
+      //     .json({errMsg: 'User Tidak Ditemukan', result});
+      // res.status(status).json({result});
     })
-    .catch(({ status, err }) => {
-      res.status(status).json({ errMsg: "Terjadi Error", err });
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+      // res.status(status).json({errMsg: 'Terjadi Error', err});
     });
 };
 
 const editUser = (req, res) => {
-  const { body, userInfo, file } = req;
+  const {body, userInfo, file} = req;
   const userId = userInfo.id;
   let newBody;
 
@@ -47,34 +52,34 @@ const editUser = (req, res) => {
       photo: file.path.slice(7),
     };
   } else {
-    newBody = { ...body };
+    newBody = {...body};
   }
 
   userModel
     .editUser(userId, newBody)
-    .then(({ status, result }) => {
+    .then(({status, result}) => {
       res.status(status).json({
-        msg: "Edit Profile berhasil",
+        msg: 'Edit Profile berhasil',
       });
     })
     .catch((status, err) => {
-      res.status(status).json({ errMsg: "Terjadi Error", err });
+      res.status(status).json({errMsg: 'Terjadi Error', err});
     });
 };
 
 const deleteUser = (req, res) => {
-  const { params } = req;
+  const {params} = req;
   const userId = params.id;
   userModel
     .deleteUser(userId)
-    .then(({ status, result }) => {
+    .then(({status, result}) => {
       res.status(status).json({
         msg: `Penghapusan User dengan id = ${userId} berhasil`,
       });
     })
     .catch((status, err) => {
-      res.status(status).json({ errMsg: "Terjadi Error", err });
+      res.status(status).json({errMsg: 'Terjadi Error', err});
     });
 };
 
-module.exports = { addUser, detailUser, editUser, deleteUser };
+module.exports = {addUser, detailUser, editUser, deleteUser};

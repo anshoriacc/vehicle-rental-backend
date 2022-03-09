@@ -4,9 +4,9 @@ const userRouter = express.Router();
 const auth = require("../middlewares/authorize");
 const upload = require("../middlewares/upload");
 
-userRouter.post("/add", userController.addUser);
 userRouter.get("/detail", auth.authorize, userController.detailUser);
 userRouter.patch("/edit", auth.authorize, upload, userController.editUser);
-userRouter.delete("/:id", auth.authorize, userController.deleteUser);
+// userRouter.post("/add", userController.addUser);
+// userRouter.delete("/:id", auth.authorize, userController.deleteUser);
 
 module.exports = userRouter;
