@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 const detailUser = (userId) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT *
+    const sqlQuery = `SELECT id, name, email, phone, gender, address, dob, photo, created_at as createdAt, role_id as roles
     FROM users
       WHERE id = ?`;
     db.query(sqlQuery, userId, (err, result) => {
