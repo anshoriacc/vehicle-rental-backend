@@ -122,10 +122,14 @@ const logout = (token) => {
 
 const forgot = (email) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `SELECT * FROM user WHERE email = ?`;
+    const sqlQuery = `SELECT * FROM users WHERE email = ?`;
 
     db.query(sqlQuery, email, (err, result) => {
-      if (err) return reject({status: 500, err});
+      if (err)
+        return reject({
+          status: 500,
+          err: {msg: 'Something went wrong.', data: null},
+        });
       if (result.length == 0)
         return reject({
           status: 401,
@@ -138,7 +142,10 @@ const forgot = (email) => {
       const sqlQuery = `UPDATE users SET otp = ? WHERE email = ?`;
       db.query(sqlQuery, [otp, email], (err) => {
         if (err)
-          return reject({status: 500, err: {msg: 'Something went wrong'}});
+          return reject({
+            status: 500,
+            err: {msg: 'Something went wrong.', data: null},
+          });
         const data = {
           email: email,
           otp,
