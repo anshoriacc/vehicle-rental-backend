@@ -1,11 +1,12 @@
 const db = require('../config/db');
 
-const getReservationAdmin = () => {
+const getReservationAdmin = (userId) => {
   return new Promise((resolve, reject) => {
     const sqlQuery = `SELECT r.id, u.name AS "Pemesan", v.name AS "vehicle", r.quantity, r.start_date, r.return_date, r.payment
     FROM reservation r JOIN users u ON r.user_id = u.id
-    JOIN vehicles v ON r.vehicle_id = v.id`;
-    db.query(sqlQuery, (err, result) => {
+    JOIN vehicles v ON r.vehicle_id = v.id
+    WHERE v.user_id = ?`;
+    db.query(sqlQuery, userId, (err, result) => {
       if (err)
         return reject({
           status: 500,
