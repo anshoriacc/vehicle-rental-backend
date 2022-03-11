@@ -120,4 +120,33 @@ const logout = (token) => {
   return new Promise((resolve, reject) => {});
 };
 
-module.exports = {register, login, logout};
+const forgot = (email) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = `SELECT * FROM user WHERE email = ?`;
+
+    db.query(sqlQuery, email, (err, result) => {
+      if (err) return reject({status: 500, err});
+      if (result.length == 0)
+        return reject({
+          status: 401,
+          err: {msg: 'Invalid email address.'},
+        });
+
+      const otp = Math.ceil(Math.random() * 1000000);
+      console.log('OTP ', otp);
+
+      const sqlQuery = `UPDATE users SET otp = ? WHERE email = ?`;
+      db.query(sqlQuery, [otp, email], (err) => {
+        if (err)
+          return reject({status: 500, err: {msg: 'Something went wrong'}});
+        const data = {
+          email: email,
+          otp,
+        };
+        return resolve({status: 200, result: {msg: 'Success ', data}});
+      });
+    });
+  });
+};
+
+module.exports = {register, login, logout, forgot};

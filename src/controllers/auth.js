@@ -27,4 +27,16 @@ const login = (req, res) => {
 
 const logout = (req, res) => {};
 
-module.exports = {register, login, logout};
+const forgot = (req, res) => {
+  const {email} = req.body;
+  authModel
+    .forgot(email)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
+
+module.exports = {register, login, logout, forgot};
