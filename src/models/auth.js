@@ -137,7 +137,6 @@ const forgot = (email) => {
         });
 
       const otp = Math.ceil(Math.random() * 1000000);
-      console.log('OTP ', otp);
 
       const sqlQuery = `UPDATE users SET otp = ? WHERE email = ?`;
       db.query(sqlQuery, [otp, email], (err) => {
@@ -150,7 +149,7 @@ const forgot = (email) => {
           email: email,
           otp,
         };
-        return resolve({status: 200, result: {msg: 'Success ', data}});
+        return resolve({status: 200, result: {msg: 'Success generate otp.', data}});
       });
     });
   });
