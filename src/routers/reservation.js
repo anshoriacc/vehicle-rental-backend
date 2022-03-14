@@ -27,4 +27,10 @@ reservationRouter.patch(
   reservationController.rate
 );
 
+reservationRouter.patch(
+  "/delete",
+  auth.authorizeOwner,
+  reservationController.deleteReservation
+);
+
 module.exports = reservationRouter;

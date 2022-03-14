@@ -13,7 +13,7 @@ const getVehicle = (query) => {
     JOIN categories c ON v.category_id = c.id`;
 
     const statement = [];
-    let nextPage = `/vehicles?orderby=${orderby}&order=${order}&pa ge=${
+    let nextPage = `/vehicles?orderby=${orderby}&order=${order}&page=${
       page + 1
     }&limit=${limit}`;
 

@@ -4,7 +4,7 @@ const resHelper = require('../helpers/response');
 const getReservationAdmin = (req, res) => {
   const {userInfo} = req;
   const userId = userInfo.id;
-  
+
   reservationModel
     .getReservationAdmin(userId)
     .then(({status, result}) => {
@@ -17,6 +17,7 @@ const getReservationAdmin = (req, res) => {
 };
 
 const getReservationCustomer = (req, res) => {
+  console.log(req.userInfo);
   const {userInfo} = req;
   const userId = userInfo.id;
 
@@ -62,9 +63,24 @@ const rate = (req, res) => {
     });
 };
 
+const deleteReservation = (req, res) => {
+  console.log(req.body);
+  const {ids} = req.body;
+
+  reservationModel
+    .deleteReservation(ids)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
+
 module.exports = {
   getReservationAdmin,
   getReservationCustomer,
   makeReservation,
   rate,
+  deleteReservation,
 };
