@@ -3,7 +3,7 @@ const db = require('../config/db');
 
 const getVehicle = (query) => {
   return new Promise((resolve, reject) => {
-    let {category, orderby, order, page, limit} = query;
+    let {search, category, orderby, order, page, limit} = query;
 
     page = parseInt(page);
     limit = parseInt(limit);
