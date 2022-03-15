@@ -48,6 +48,21 @@ const makeReservation = (req, res) => {
     });
 };
 
+const getReservationDetail = (req, res) => {
+  const {params} = req;
+  const reservationId = params.id;
+  console.log(reservationId, body);
+
+  reservationModel
+    .getReservationDetail(reservationId)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch((status, err) => {
+      return resHelper.error(res, status, err);
+    });
+};
+
 const rate = (req, res) => {
   const {params, body} = req;
   const reservationId = params.id;
@@ -80,6 +95,7 @@ const deleteReservation = (req, res) => {
 module.exports = {
   getReservationAdmin,
   getReservationCustomer,
+  getReservationDetail,
   makeReservation,
   rate,
   deleteReservation,
