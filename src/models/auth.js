@@ -122,11 +122,13 @@ const logout = (token) => {
     const sqlQuery = `INSERT INTO blacklist_token (token) VALUES ?`;
 
     db.query(sqlQuery, [token], (err, result) => {
-      if (err)
+      if (err) {
+        console.log('err', err);
         return reject({
           status: 500,
           err: {msg: 'Logout Failed', data: null},
         });
+      }
       return resolve({
         status: 200,
         result: {msg: 'Logout Success', data: null},
