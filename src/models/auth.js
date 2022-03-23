@@ -123,7 +123,6 @@ const logout = (token) => {
 
     db.query(sqlQuery, [token], (err, result) => {
       if (err) {
-        console.log('err', err);
         return reject({
           status: 500,
           err: {msg: 'Logout Failed', data: null},
