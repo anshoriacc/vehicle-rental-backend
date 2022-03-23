@@ -119,7 +119,7 @@ const login = (body) => {
 
 const logout = (token) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = `INSERT INTO blacklist_token (token) VALUES (?)`;
+    const sqlQuery = `INSERT INTO blacklist_token (token) VALUES ?`;
 
     db.query(sqlQuery, [token], (err, result) => {
       if (err)
