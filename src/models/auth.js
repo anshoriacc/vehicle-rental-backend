@@ -53,6 +53,7 @@ const login = (body) => {
     const sqlQuery = `SELECT * FROM users WHERE ?`;
     db.query(sqlQuery, {email}, (err, result) => {
       if (err) {
+        console.log({...err});
         return reject({
           status: 500,
           err: {msg: 'Something went wrong.', data: null},
@@ -86,7 +87,7 @@ const login = (body) => {
           role_id: result[0].role_id,
         };
         const jwtOptions = {
-          // expiresIn: "15m",
+          expiresIn: '1d',
           // issuer: process.env.ISSUER,
         };
 
@@ -117,7 +118,21 @@ const login = (body) => {
 };
 
 const logout = (token) => {
-  return new Promise((resolve, reject) => {});
+  return new Promise((resolve, reject) => {
+    const sqlQuery = `INSERT INTO blacklist_token (token) VALUES (?)`;
+
+    db.query(sqlQuery, [token], (err, result) => {
+      if (err)
+        return reject({
+          status: 500,
+          err: {msg: 'Logout Failed', data: null},
+        });
+      return resolve({
+        status: 200,
+        result: {msg: 'Logout Success', data: null},
+      });
+    });
+  });
 };
 
 const forgot = (email) => {
@@ -149,7 +164,10 @@ const forgot = (email) => {
           email: email,
           otp,
         };
-        return resolve({status: 200, result: {msg: 'Success generate otp.', data}});
+        return resolve({
+          status: 200,
+          result: {msg: 'Success generate otp.', data},
+        });
       });
     });
   });

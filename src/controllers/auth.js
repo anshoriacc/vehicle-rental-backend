@@ -25,7 +25,17 @@ const login = (req, res) => {
     });
 };
 
-const logout = (req, res) => {};
+const logout = (req, res) => {
+  const token = req.header('x-access-token');
+  authModel
+    .logout(token)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
 
 const forgot = (req, res) => {
   const {email} = req.body;

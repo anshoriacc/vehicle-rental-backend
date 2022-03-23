@@ -4,16 +4,17 @@ const vehicleRouter = express.Router();
 const auth = require('../middlewares/authorize');
 const uploadMultiple = require('../middlewares/uploadMultiple');
 
+// vehicleRouter.get('/:category', vehicleController.getVehicleByCategory);
+
+// vehicleRouter.get('/detail/:id', vehicleController.vehicleDetail);
+
+// vehicleRouter.get('/', vehicleController.getVehicle);
+
 vehicleRouter.get('/search', vehicleController.searchVehicle);
-
-vehicleRouter.get('/:category', vehicleController.getVehicleByCategory);
-
-vehicleRouter.get('/detail/:id', vehicleController.vehicleDetail);
-
-vehicleRouter.get('/', vehicleController.getVehicle);
 
 vehicleRouter.post(
   '/',
+  auth.authorize,
   auth.authorizeOwner,
   uploadMultiple,
   vehicleController.postNewVehicle
@@ -21,6 +22,7 @@ vehicleRouter.post(
 
 vehicleRouter.patch(
   '/:id',
+  auth.authorize,
   auth.authorizeOwner,
   uploadMultiple,
   vehicleController.editVehicle
@@ -28,6 +30,7 @@ vehicleRouter.patch(
 
 vehicleRouter.delete(
   '/:id',
+  auth.authorize,
   auth.authorizeOwner,
   vehicleController.deleteVehicle
 );
