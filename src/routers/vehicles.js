@@ -4,13 +4,13 @@ const vehicleRouter = express.Router();
 const auth = require('../middlewares/authorize');
 const uploadMultiple = require('../middlewares/uploadMultiple');
 
-// vehicleRouter.get('/:category', vehicleController.getVehicleByCategory);
-
-// vehicleRouter.get('/detail/:id', vehicleController.vehicleDetail);
-
-// vehicleRouter.get('/', vehicleController.getVehicle);
+vehicleRouter.get('/detail/:id', vehicleController.vehicleDetail);
 
 vehicleRouter.get('/search', vehicleController.searchVehicle);
+
+vehicleRouter.get('/:category', vehicleController.getVehicleByCategory);
+
+// vehicleRouter.get('/', vehicleController.getVehicle);
 
 vehicleRouter.post(
   '/',
