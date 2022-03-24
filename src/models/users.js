@@ -11,7 +11,7 @@ const detailUser = (userId) => {
           status: 500,
           err: {msg: 'Something went wrong.', data: null},
         });
-      resolve({
+      return resolve({
         status: 200,
         result: {msg: 'Success get detail user.', data: result[0]},
       });

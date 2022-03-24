@@ -10,7 +10,6 @@ const authorize = (req, res, next) => {
   const sqlQuery = `SELECT token FROM blacklist_token WHERE token = ?`;
   db.query(sqlQuery, [token], (err, result) => {
     if (err) {
-      console.log('error get token', err);
       return resHelper.error(res, 500, {
         status: 500,
         msg: 'Something went wrong',
@@ -20,7 +19,7 @@ const authorize = (req, res, next) => {
     if (result.length !== 0) {
       return resHelper.error(res, 403, {
         status: 403,
-        msg: 'You need to login to perform this action',
+        msg: 'You need to login first',
         data: null,
       });
     }
@@ -32,7 +31,6 @@ const authorize = (req, res, next) => {
         msg: 'You need to login first',
         data: null,
       });
-      // return res.status(403).json({errMsg: 'You need to login first.', err});
     }
     const {id, role_id} = payload;
     req.userInfo = {id, role_id};

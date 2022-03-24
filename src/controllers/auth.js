@@ -49,4 +49,40 @@ const forgot = (req, res) => {
     });
 };
 
-module.exports = {register, login, logout, forgot};
+const checkOtp = (req, res) => {
+  const {body} = req;
+  authModel
+    .checkOtp(body)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
+
+const resetPassword = (req, res) => {
+  const {body} = req;
+  authModel
+    .resetPassword(body)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
+
+const changePassword = (req, res) => {
+  const {body, userInfo} = req;
+  const {oldPassword, newPassword} = body;
+  authModel
+    .changePassword(oldPassword, newPassword, userInfo.id)
+    .then(({status, result}) => {
+      return resHelper.success(res, status, result);
+    })
+    .catch(({status, err}) => {
+      return resHelper.error(res, status, err);
+    });
+};
+module.exports = {register, login, logout, forgot, checkOtp, resetPassword, changePassword};

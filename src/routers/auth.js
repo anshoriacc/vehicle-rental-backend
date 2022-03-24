@@ -10,7 +10,14 @@ authRouter.post(
   authController.register
 );
 authRouter.post('/login', validate.validateLogin, authController.login);
+authRouter.patch(
+  '/change-password',
+  auth.authorize,
+  authController.changePassword,
+)
 authRouter.post('/logout', auth.authorize, authController.logout);
 authRouter.post('/forgot', authController.forgot);
+authRouter.post('/check-otp', authController.checkOtp)
+authRouter.post('/reset-password', authController.resetPassword);
 
 module.exports = authRouter;
